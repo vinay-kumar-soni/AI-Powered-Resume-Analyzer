@@ -36,20 +36,20 @@ if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     try:
         model = genai.GenerativeModel('gemini-2.5-flash')
-        print("✅ Using Gemini 2.5 Flash model")
+        print("Using Gemini 2.5 Flash model")
     except Exception:
         try:
             model = genai.GenerativeModel('gemini-1.5-flash')
-            print("✅ Using Gemini 1.5 Flash model")
+            print("Using Gemini 1.5 Flash model")
         except Exception:
             try:
                 model = genai.GenerativeModel('gemini-pro')
-                print("✅ Using Gemini Pro model")
+                print("Using Gemini Pro model")
             except Exception:
-                print("⚠️ No Gemini model available")
+                print("No Gemini model available")
                 model = None
 else:
-    print("⚠️ WARNING: GEMINI_API_KEY not found")
+    print("WARNING: GEMINI_API_KEY not found")
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -465,7 +465,7 @@ def upload_resume():
             db.session.add(new_resume)
             db.session.commit()
             
-            flash(f'✅ Resume "{filename}" uploaded successfully!', 'success')
+            flash(f' Resume "{filename}" uploaded successfully!', 'success')
             
             if job_description:
                 return redirect(url_for('analyze_resume', resume_id=new_resume.id))
@@ -494,7 +494,7 @@ def analyze_resume(resume_id):
         resume_text = "Unsupported file format"
     
     if resume.job_description and resume.job_description.strip():
-        flash('🤖 Analyzing your resume with Gemini AI... This may take a few seconds.', 'info')
+        flash('Analyzing your resume with Gemini AI... This may take a few seconds.', 'info')
         
         result = analyze_with_gemini(resume_text, resume.job_description)
         
@@ -508,9 +508,9 @@ def analyze_resume(resume_id):
         
         db.session.commit()
         
-        flash(f'✅ Analysis complete! Match Score: {result["score"]}%', 'success')
+        flash(f' Analysis complete! Match Score: {result["score"]}%', 'success')
     else:
-        flash('⚠️ Please add a job description for analysis', 'warning')
+        flash(' Please add a job description for analysis', 'warning')
         return redirect(url_for('upload'))
     
     return redirect(url_for('view_result', resume_id=resume.id))
@@ -566,7 +566,7 @@ def analytics():
         hovertemplate='<b>%{text}</b><br>Date: %{x}<br>Score: %{y}%<extra></extra>'
     ))
     score_trend.update_layout(
-        title='📈 Match Score Trend Over Time',
+        title='Match Score Trend Over Time',
         xaxis_title='Upload Date',
         yaxis_title='Match Score (%)',
         yaxis_range=[0, 100],
@@ -594,7 +594,7 @@ def analytics():
         hovertemplate='<b>%{x}</b><br>Count: %{y}<extra></extra>'
     ))
     score_dist.update_layout(
-        title='📊 Score Distribution',
+        title='Score Distribution',
         xaxis_title='Score Category',
         yaxis_title='Number of Resumes',
         template='plotly_white',
@@ -629,7 +629,7 @@ def analytics():
             hovertemplate='<b>%{y}</b><br>Mentions: %{x}<extra></extra>'
         ))
         strengths_chart.update_layout(
-            title='💪 Most Mentioned Strengths',
+            title=' Most Mentioned Strengths',
             xaxis_title='Number of Mentions',
             yaxis_title='Skill/Strength',
             template='plotly_white',
@@ -674,7 +674,7 @@ def analytics():
         line=dict(width=2, color='#ffc107')
     ))
     activity_chart.update_layout(
-        title='📅 Monthly Activity & Performance',
+        title='Monthly Activity & Performance',
         xaxis_title='Month',
         yaxis_title='Number of Resumes',
         yaxis2=dict(title='Average Score (%)', overlaying='y', side='right', range=[0, 100]),
@@ -720,7 +720,7 @@ def analytics():
             hovertemplate='<b>%{y}</b><br>Score: %{z}/10<br>%{x}<extra></extra>'
         ))
         heatmap_chart.update_layout(
-            title='🔥 Skill Match Heatmap',
+            title='Skill Match Heatmap',
             xaxis_title='Recent Resumes',
             yaxis_title='Technical Skills',
             height=450,
@@ -783,6 +783,6 @@ def logout():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        print("✅ Database created successfully!")
-    print("🚀 Starting Flask app at http://127.0.0.1:5000")
+        print("Database created successfully!")
+    print(" Starting Flask app at http://127.0.0.1:5000")
     app.run(debug=True)
