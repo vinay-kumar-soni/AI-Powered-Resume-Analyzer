@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{% block title %}AI Resume Analyzer{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        
+        /* Flash message animation */
+        .flash {
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Fade out animation for auto-hide */
+        .flash.fade-out {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2>🤖 AI Resume Analyzer</h2>
+        <div class="nav-links">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a href="{{ url_for('upload_resume') }}">📤 Upload</a>
+                <a href="{{ url_for('history') }}">📜 History</a>
+                <a href="{{ url_for('analytics') }}">📈 Analytics</a>
+                <a href="{{ url_for('logout') }}">🚪 Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">🔐 Login</a>
+                <a href="{{ url_for('register') }}">📝 Register</a>
+            {% endif %}
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Dark</span>
+        </button>
+    </nav>
+
+    <div class="container" id="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}" data-auto-hide="true">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // ==================== THEME TOGGLE FUNCTION ====================
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            if (newTheme === 'dark') {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            } else {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+        
+        // ==================== LOAD SAVED THEME ====================
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        if (savedTheme === 'dark') {
+            themeIcon.textContent = '🌙';
+            themeText.textContent = 'Dark';
+        } else {
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Light';
+        }
+        
+        // ==================== AUTO-HIDE FLASH MESSAGES ====================
+        // Function to auto-hide flash messages after 3 seconds
+        function autoHideFlashMessages() {
+            const flashMessages = document.querySelectorAll('.flash[data-auto-hide="true"]');
+            
+            flashMessages.forEach(function(message) {
+                // Set timeout for each message - success and info messages auto-hide
+                // Danger messages stay longer or don't auto-hide
+                const isDanger = message.classList.contains('danger');
+                const hideDelay = isDanger ? 5000 : 3000; // Danger: 5 sec, Others: 3 sec
+                
+                setTimeout(function() {
+                    // Add fade-out class
+                    message.classList.add('fade-out');
+                    
+                    // Remove after animation completes
+                    setTimeout(function() {
+                        if (message.parentNode) {
+                            message.remove();
+                        }
+                    }, 500);
+                }, hideDelay);
+            });
+        }
+        
+        // New flash messages observer (for dynamically added flash messages)
+        function observeFlashMessages() {
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes.length) {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1 && node.classList && node.classList.contains('flash')) {
+                                const isDanger = node.classList.contains('danger');
+                                const hideDelay = isDanger ? 5000 : 3000;
+                                
+                                setTimeout(function() {
+                                    node.classList.add('fade-out');
+                                    setTimeout(function() {
+                                        if (node.parentNode) {
+                                            node.remove();
+                                        }
+                                    }, 500);
+                                }, hideDelay);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            const container = document.getElementById('flash-container');
+            if (container) {
+                observer.observe(container, { childList: true, subtree: true });
+            }
+        }
+        
+        // Run auto-hide on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            autoHideFlashMessages();
+            observeFlashMessages();
+        });
+    </script>
+</body>
+</html>

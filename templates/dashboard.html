@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="welcome-card">
+    <h1>Welcome, {{ user.username }}! 👋</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Upload your resume and get AI-powered analysis</p>
+    <a href="/upload" class="btn btn-primary" style="margin-top: 1rem;">📤 Upload New Resume</a>
+</div>
+
+<div class="feature-section">
+    <div class="card">
+        <div class="emoji-big">📄</div>
+        <h3>Upload Resume</h3>
+        <p style="color: var(--text-muted);">Upload PDF or DOCX files</p>
+        <a href="/upload" class="btn btn-outline btn-small" style="margin-top: 1rem;">Upload Now →</a>
+    </div>
+    
+    <div class="card">
+        <div class="emoji-big">📊</div>
+        <h3>Visual Analytics</h3>
+        <p style="color: var(--text-muted);">View charts and insights</p>
+        <a href="/analytics" class="btn btn-outline btn-small" style="margin-top: 1rem;">View Analytics →</a>
+    </div>
+    
+    <div class="card">
+        <div class="emoji-big">🎯</div>
+        <h3>AI Analysis</h3>
+        <p style="color: var(--text-muted);">Match with job description</p>
+        <a href="/upload" class="btn btn-outline btn-small" style="margin-top: 1rem;">Get Started →</a>
+    </div>
+    
+    <div class="card">
+        <div class="emoji-big">📜</div>
+        <h3>Analysis History</h3>
+        <p style="color: var(--text-muted);">View past analyses</p>
+        <a href="/history" class="btn btn-outline btn-small" style="margin-top: 1rem;">View History →</a>
+    </div>
+</div>
+
+{% if resumes %}
+<h2 class="section-title">📁 Your Recent Resumes</h2>
+<div class="resume-list">
+    {% for resume in resumes[:5] %}
+    <div class="resume-item">
+        <div class="resume-info">
+            <h4>{{ resume.filename }}</h4>
+            <p>📅 Uploaded: {{ resume.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            {% if resume.match_score %}
+                <p><span class="resume-score">🎯 Score: {{ resume.match_score }}%</span></p>
+            {% else %}
+                <p><span class="resume-score">⏳ Not analyzed yet</span></p>
+            {% endif %}
+        </div>
+        <div class="btn-group">
+            <a href="/analyze/{{ resume.id }}" class="btn btn-primary btn-small">🔍 Analyze</a>
+            <a href="/delete/{{ resume.id }}" class="btn btn-danger btn-small" onclick="return confirm('Delete this resume?')">🗑️ Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

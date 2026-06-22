@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}History - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📜 Analysis History</h2>
+    
+    {% if resumes %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: var(--bg-input); border-bottom: 2px solid var(--border-color);">
+                    <th style="padding: 12px; text-align: left;">File Name</th>
+                    <th style="padding: 12px; text-align: left;">Upload Date</th>
+                    <th style="padding: 12px; text-align: left;">Match Score</th>
+                    <th style="padding: 12px; text-align: left;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resume in resumes %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 12px;">{{ resume.filename }}</td>
+                    <td style="padding: 12px;">{{ resume.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td style="padding: 12px;">
+                        {% if resume.match_score %}
+                            <span class="resume-score">{{ resume.match_score }}%</span>
+                        {% else %}
+                            <span class="resume-score" style="background: #6c757d;">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <div class="btn-group">
+                            <a href="/analyze/{{ resume.id }}" class="btn btn-primary btn-small">🔍 Analyze</a>
+                            <a href="/delete/{{ resume.id }}" class="btn btn-danger btn-small" onclick="return confirm('Delete this resume?')">🗑️ Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No resumes uploaded yet.</p>
+    <a href="/upload" class="btn btn-primary" style="margin-top: 1rem;">📤 Upload your first resume</a>
+    {% endif %}
+</div>
+{% endblock %}

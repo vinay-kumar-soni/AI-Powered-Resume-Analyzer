@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<!-- Statistics Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-number">{{ total_resumes }}</div>
+        <div class="stat-label">Total Resumes Analyzed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-number">{{ "%.1f"|format(avg_score) }}%</div>
+        <div class="stat-label">Average Match Score</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-number">{{ "%.1f"|format(best_score) }}%</div>
+        <div class="stat-label">Best Match Score</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-number {% if improvement > 0 %}improvement-positive{% elif improvement < 0 %}improvement-negative{% endif %}">
+            {% if improvement > 0 %}+{% endif %}{{ "%.1f"|format(improvement) }}%
+        </div>
+        <div class="stat-label">Overall Improvement</div>
+    </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="chart-grid">
+    <div class="chart-card">
+        <div class="chart-title">📈 Match Score Trend</div>
+        <div id="chart1"></div>
+    </div>
+    
+    <div class="chart-card">
+        <div class="chart-title">📊 Score Distribution</div>
+        <div id="chart2"></div>
+    </div>
+    
+    <div class="chart-card">
+        <div class="chart-title">💪 Most Mentioned Strengths</div>
+        <div id="chart3"></div>
+    </div>
+    
+    <div class="chart-card">
+        <div class="chart-title">📅 Monthly Activity</div>
+        <div id="chart4"></div>
+    </div>
+    
+    <div class="chart-card">
+        <div class="chart-title">🔥 Skill Match Heatmap</div>
+        <div id="chart5"></div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+            🟢 Green = Strong match | 🔴 Red = Needs improvement
+        </p>
+    </div>
+</div>
+
+<!-- Top Performing Resumes -->
+<div class="card">
+    <h3>🏆 Top Performing Resumes</h3>
+    {% if top_resumes %}
+    <div class="resume-list">
+        {% for resume in top_resumes %}
+        <div class="resume-item">
+            <div class="resume-info">
+                <h4>{{ resume.filename }}</h4>
+                <p>📅 Uploaded: {{ resume.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+            <div class="btn-group">
+                <span class="resume-score">{{ resume.match_score }}%</span>
+                <a href="/result/{{ resume.id }}" class="btn btn-primary btn-small">View</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No resumes analyzed yet.</p>
+    <a href="/upload" class="btn btn-primary" style="margin-top: 1rem;">Upload your first resume</a>
+    {% endif %}
+</div>
+
+<style>
+    .improvement-positive {
+        color: #28a745;
+    }
+    .improvement-negative {
+        color: #dc3545;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        transition: all var(--transition-fast);
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent-primary);
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        margin: 0.5rem 0;
+    }
+    .stat-icon {
+        font-size: 2rem;
+    }
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+    .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .chart-card {
+        background: var(--bg-card);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+    }
+    .chart-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-left: 0.75rem;
+        border-left: 4px solid var(--accent-primary);
+    }
+    @media (max-width: 768px) {
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    // Plot charts
+    var chart1 = {{ chart1|safe }};
+    Plotly.newPlot('chart1', chart1.data, chart1.layout, {responsive: true});
+    
+    var chart2 = {{ chart2|safe }};
+    Plotly.newPlot('chart2', chart2.data, chart2.layout, {responsive: true});
+    
+    var chart3 = {{ chart3|safe }};
+    Plotly.newPlot('chart3', chart3.data, chart3.layout, {responsive: true});
+    
+    var chart4 = {{ chart4|safe }};
+    Plotly.newPlot('chart4', chart4.data, chart4.layout, {responsive: true});
+
+    var chart5 = {{ chart5|safe }};
+    Plotly.newPlot('chart5', chart5.data, chart5.layout, {responsive: true});
+</script>
+{% endblock %}

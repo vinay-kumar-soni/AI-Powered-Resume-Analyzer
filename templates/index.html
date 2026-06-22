@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 100px auto;">
+    <div style="text-align: center;">
+        <div class="emoji-big" style="font-size: 80px;">🤖</div>
+        <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">AI Resume Analyzer</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Powered by Google Gemini AI</p>
+        <p style="margin: 1rem 0;">Analyze your resume against any job description</p>
+        <p style="margin: 1rem 0;">Get AI-powered suggestions to improve!</p>
+        <div class="btn-group" style="justify-content: center; margin-top: 2rem;">
+            <a href="/login" class="btn btn-primary btn-large">🔐 Login</a>
+            <a href="/register" class="btn btn-outline btn-large">📝 Register</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

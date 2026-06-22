@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Resume - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <h2>📄 Upload Resume for Analysis</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>💼 Job Title (Optional)</label>
+            <input type="text" name="job_title" class="form-control" placeholder="e.g., Senior Python Developer">
+        </div>
+        
+        <div class="form-group">
+            <label>📁 Select Resume (PDF or DOCX)</label>
+            <input type="file" name="resume" class="form-control" accept=".pdf,.docx" required>
+        </div>
+        
+        <div class="form-group">
+            <label>💼 Job Description (Optional - for AI analysis)</label>
+            <textarea name="job_description" class="form-control" placeholder="Paste the job description here for matching analysis..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">🚀 Upload & Analyze</button>
+        <a href="/dashboard" class="btn btn-outline">← Back to Dashboard</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="score-card">
+    <h2>📊 Resume Match Score</h2>
+    <div class="score-number">{{ resume.match_score or 0 }}%</div>
+    <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ resume.match_score or 0 }}%"></div>
+    </div>
+    {% if resume.match_score %}
+        {% if resume.match_score >= 80 %}
+            <p>🎉 <strong>Excellent match!</strong> Your resume aligns very well with the job requirements.</p>
+            <span class="badge badge-excellent">Top Candidate</span>
+        {% elif resume.match_score >= 60 %}
+            <p>👍 <strong>Good match!</strong> Some improvements can make it even better.</p>
+            <span class="badge badge-good">Good Potential</span>
+        {% elif resume.match_score >= 40 %}
+            <p>📝 <strong>Average match.</strong> Consider updating your resume to better match the job.</p>
+            <span class="badge badge-average">Needs Work</span>
+        {% else %}
+            <p>⚠️ <strong>Low match.</strong> Significant improvements needed.</p>
+            <span class="badge badge-poor">Requires Major Updates</span>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% if resume.strengths %}
+<div class="card strengths">
+    <h3>✅ Key Strengths</h3>
+    <div class="strengths-list">
+        {% for strength in resume.strengths.split('\n') %}
+            {% if strength.strip() %}
+                <p>{{ strength }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if resume.improvements %}
+<div class="card improvements">
+    <h3>📈 Areas for Improvement</h3>
+    <div class="improvements-list">
+        {% for improvement in resume.improvements.split('\n') %}
+            {% if improvement.strip() %}
+                <p>{{ improvement }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if resume.analysis_result %}
+<div class="card analysis">
+    <h3>🔍 Detailed Analysis</h3>
+    <div class="analysis">
+        <p>{{ resume.analysis_result }}</p>
+    </div>
+</div>
+{% endif %}
+
+<div class="btn-group" style="justify-content: center; margin-top: 2rem;">
+    <a href="/dashboard" class="btn btn-outline">📊 Back to Dashboard</a>
+    <a href="/upload" class="btn btn-primary">📤 Upload Another Resume</a>
+    <a href="/history" class="btn btn-outline">📜 View History</a>
+</div>
+
+<style>
+    .badge-excellent {
+        background: #28a745;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .badge-good {
+        background: #17a2b8;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .badge-average {
+        background: #ffc107;
+        color: #333;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .badge-poor {
+        background: #dc3545;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .strengths {
+        border-left: 5px solid #28a745;
+    }
+    .improvements {
+        border-left: 5px solid #ffc107;
+    }
+    .analysis {
+        border-left: 5px solid #17a2b8;
+    }
+    .strengths-list p, .improvements-list p {
+        padding: 8px 0;
+        margin: 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .strengths-list p:last-child, .improvements-list p:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
